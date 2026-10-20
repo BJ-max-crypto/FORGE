@@ -55,6 +55,7 @@ input,
 textarea,
 select {
   touch-action: manipulation;
+  scroll-margin-bottom: calc(128px + env(safe-area-inset-bottom));
 }
 
 ::selection {

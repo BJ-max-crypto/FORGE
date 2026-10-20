@@ -2,11 +2,15 @@
 
 import Link from "next/link";
 import {
+  Children,
+  cloneElement,
+  isValidElement,
   useEffect,
   useId,
   useRef,
   type ButtonHTMLAttributes,
   type InputHTMLAttributes,
+  type ReactElement,
   type ReactNode,
   type TextareaHTMLAttributes,
 } from "react";
@@ -51,16 +55,28 @@ export function Field({
   error?: string;
   children: ReactNode;
 }) {
+  const id = useId();
+  const sole = Children.count(children) === 1 && isValidElement(children)
+    ? (children as ReactElement<{ id?: string }>)
+    : null;
   return (
-    <label className="block">
-      <span className="mb-2 block text-[13px] font-medium">{label}</span>
-      {children}
+    <div>
+      {sole ? (
+        <label htmlFor={id} className="mb-2 block text-[13px] font-medium">
+          {label}
+        </label>
+      ) : (
+        <span id={id} className="mb-2 block text-[13px] font-medium">
+          {label}
+        </span>
+      )}
+      {sole ? cloneElement(sole, { id }) : <div role="group" aria-labelledby={id}>{children}</div>}
       {error ? (
         <span className="mt-1.5 block text-[13px] text-danger">{error}</span>
       ) : hint ? (
         <span className="mt-1.5 block text-[13px] leading-5 text-muted">{hint}</span>
       ) : null}
-    </label>
+    </div>
   );
 }
 
